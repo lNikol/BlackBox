@@ -2,6 +2,8 @@
 
 class Menu {
 	public:
-		void printMenu();
+		void showAuthor();
+		void printMenu(Menu&);
+		void gameMenu();
 
 };

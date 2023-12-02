@@ -1,19 +1,23 @@
 #pragma once
 #include "Menu.h"
 #include "Player.h"
-
+#include "Console.h"
+#include "Cell.h"
 class Game {
 	private:
-		int arr[4];
-		bool** gameField;
-		int** gameCoords;
-
+		bool isStarted = false;
+		Cell** gameField;
 	public:
 		int arrLength;
-		Game(int);
 		Menu menu;
 		Player player;
-		void movement(int, Game&);
-		void movementSystem(int, Game&);
-		void render(Game&);
+		Console console;
+
+		void movement(int);
+		void movementSystem(int);
+		void shootSystem();
+		void render();
+		void start();
+		void startGame();
+		Cell** getGameField();
 };

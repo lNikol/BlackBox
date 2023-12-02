@@ -1,7 +1,2 @@
-﻿  BlackBox.cpp
-  Console.cpp
-  Game.cpp
-  Menu.cpp
-  Player.cpp
-  Generating Code...
+﻿  Console.cpp
   BlackBox.vcxproj -> E:\PG\Podstawy programowania\BlackBox\x64\Debug\BlackBox.exe
