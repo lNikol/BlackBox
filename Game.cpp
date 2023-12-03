@@ -38,55 +38,61 @@ void Game::start() {
 
 void Game::startGame() {
 	isStarted = true;
-	gameField = new Cell * [arrLength + 4];
-	for (int i = 0; i < arrLength + 4; i++) {
-		gameField[i] = new Cell[arrLength + 4];
+	gameField = new Cell * [arrLength + 6];
+	for (int i = 0; i < arrLength + 6; i++) {
+		gameField[i] = new Cell[arrLength + 6];
 
-		for (int j = 0; j < arrLength + 4; j++) {
+		for (int j = 0; j < arrLength + 6; j++) {
 			gameField[i][j].setX(j);
 			gameField[i][j].setY(i);
 
-			if ((i == 0 || i == arrLength + 3) || (j == 0 || j == arrLength + 3)) {
+			if ((i == 0 || i == arrLength + 5) || (j == 0 || j == arrLength + 5)) {
 				gameField[i][j].setIsAnswerHere(true);
 				gameField[i][j].setAnswerHere('A');
 			}
-			if (((i < arrLength + 3) && i != 0) && ((j < arrLength + 3) && j != 0)) {
 
-				if (i == 1 && j == 1) {
+			if ((j >= 1 && j <= arrLength + 4) && (i >= 1 && i <= arrLength + 4)) { // spacje
+				if (j == 1 && (i >= 1 && i <= arrLength + 4)) {
+					gameField[i][j].setIsSpaceHere(true);
+				}
+				else if (j == (arrLength + 4) && (i >= 1 && i <= arrLength + 4)) {
+					gameField[i][j].setIsSpaceHere(true);
+				}
+				else if ((j >= 1 && j <= (arrLength + 4)) && (i == 1 || i == arrLength + 4)) {
+					gameField[i][j].setIsSpaceHere(true);
+				}
+			}
+
+			if (((i > 1 && i < arrLength + 4)) && ((j < arrLength + 4) && j > 1)) { // granicy
+				if (i == 2 && j == 2) {
 					gameField[i][j].setBorderHere(201); // lew gorn
 					gameField[i][j].setIsBorderHere(true);
 				}
-				else if (i == 1 && j == arrLength + 2)// praw gorn
+				else if (i == 2 && j == arrLength + 3)// praw gorn
 				{
 					gameField[i][j].setBorderHere(187);
 					gameField[i][j].setIsBorderHere(true);
 				}
-				else if (i == arrLength + 2 && j == 1) {// lew doln
+				else if (i == arrLength + 3 && j == 2) {// lew doln
 
 					gameField[i][j].setBorderHere(200);
 					gameField[i][j].setIsBorderHere(true);
 				}
-				else if (i == arrLength + 2 && j == arrLength + 2) {// praw dolny
+				else if (i == arrLength + 3 && j == arrLength + 3) {// praw dolny
 					gameField[i][j].setBorderHere(188);
 					gameField[i][j].setIsBorderHere(true);
 				}
-				else if ((i == 1 || i == arrLength + 2)) {
+				else if ((i == 2 || i == arrLength + 3)) {
 					gameField[i][j].setBorderHere(205);
 					gameField[i][j].setIsBorderHere(true);
 
 				}
-				else if ((j == 1 && i < (arrLength + 2)) || (j == arrLength + 2 && i < (arrLength + 2))) {
+				else if ((j == 2 && i < (arrLength + 3)) || (j == arrLength + 3 && i < (arrLength + 3))) {
 					gameField[i][j].setBorderHere(186);
 					gameField[i][j].setIsBorderHere(true);
 				}
-
-
 			}
-			if (i == 2 && j == 2) {
-				gameField[i][j].setIsPlayerHere(true);
-				gameField[i][j].setY(i);
-				gameField[i][j].setX(j);
-			}
+			if (i == 3 && j == 3) gameField[i][j].setIsPlayerHere(true);
 		}
 		cout << endl;
 	}
@@ -95,17 +101,23 @@ void Game::startGame() {
 void Game::movement(int key) {
 	int px = player.getX();
 	int py = player.getY();
+	cout << px << py << endl;
 
 	switch (key) {
-		//rewrite
-	case 119: if (py <= arrLength + 1 && py > 2) { player.setY(player.getY() - 1); } break; //w
-	case 115: if (py <= arrLength + 1 && py >= 1) { player.setY(player.getY() + 1); } break; //s
-	case 97: if (px <= arrLength + 1 && px > 2) { player.setX(player.getX() - 1); } break; //a
-	case 100: if (px < arrLength + 1 && px >= 2) { player.setX(player.getX() + 1); } break; //d
+		case 119: if (py <= arrLength + 4 && py > 1) { player.setY(player.getY() - 1); } break; //w
+		case 115: if (py < arrLength + 4 && py >= 1) { player.setY(player.getY() + 1); } break; //s
+		case 97: if (px <= arrLength + 4 && px > 1) { player.setX(player.getX() - 1); } break; //a
+		case 100: if (px < arrLength + 4 && px >= 1) { player.setX(player.getX() + 1); } break; //d
 	}
-	gameField[player.getOldX()][player.getOldY()].setIsPlayerHere(false);
-	gameField[px][py].setIsPlayerHere(true);
+	px = player.getX();
+	py = player.getY();
+	
+	gameField[player.getOldY()][player.getOldX()].setIsPlayerHere(false);
+	gameField[py][px].setIsPlayerHere(true);
 	player.setOldX(px); player.setOldY(py);
+	
+	cout << px << py << endl<<endl;
+	console.drawMap(gameField, arrLength);
 
 }
 
@@ -116,7 +128,6 @@ void Game::movementSystem(int key) {
 	if (key == 119 || key == 115 || key == 97 || key == 100) {
 		movement(key);
 		//cout << player.getX() << player.getY() << endl;
-		console.drawMap(gameField, arrLength);
 
 	}
 	else {
@@ -144,6 +155,7 @@ void Game::movementSystem(int key) {
 		else if (key == 107) { // k
 			isStarted = false;
 			cout << "End" << endl;
+			endGame();
 		}
 		else {
 			cout << "Wrong symbol" << endl;
@@ -153,4 +165,7 @@ void Game::movementSystem(int key) {
 
 void Game::render() {
 
+}
+void Game::endGame() {
+	delete[] gameField;
 }

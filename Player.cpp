@@ -3,10 +3,10 @@
 using namespace std;
 
 Player::Player() {
-		x = 2;
-		y = 2;
-		oldX = 2;
-		oldY = 2;
+		x = 3;
+		y = 3;
+		oldX = 3;
+		oldY = 3;
 }
 void Player::setX(int xt) { x = xt; }
 void Player::setY(int yt) { y = yt; }

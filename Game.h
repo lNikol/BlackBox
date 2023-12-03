@@ -19,5 +19,6 @@ class Game {
 		void render();
 		void start();
 		void startGame();
+		void endGame();
 		Cell** getGameField();
 };

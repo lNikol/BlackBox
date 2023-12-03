@@ -7,5 +7,5 @@ class Console {
 		void drawTopBorder(int);
 		void drawBorderContent(int);
 		void drawBottomBorder(int);
-		void showPlayer(Player&);
+		void showPlayer(int, int, int);
 };

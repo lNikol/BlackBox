@@ -3,6 +3,9 @@ class Cell {
 private:
 	int x = 0, y = 0;
 	bool isAtomHere = false;
+	bool atomIsHereByPlayer = false;
+	char atomHereByPlayer = 'o';
+
 	bool isPlayerHere = false;
 	bool isBorderHere = false;
 	unsigned char borderHere;
