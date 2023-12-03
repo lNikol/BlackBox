@@ -78,23 +78,12 @@ void Game::startGame() {
 				else if ((j == 1 && i < (arrLength + 2)) || (j == arrLength + 2 && i < (arrLength + 2))) {
 					gameField[i][j].setBorderHere(186);
 					gameField[i][j].setIsBorderHere(true);
-				}	
+				}
 
 
 			}
-			/*if ((i == 1 || i == arrLength + 2)) {
-				gameField[i][j].setBorder(true);
-			}
-			else if (j == 1 || j == arrLength+2) {
-				gameField[i][j].setBorder(true);
-			}
-
-			else if (j == 2 && i == 2) {
-				gameField[i][j].setPlayer(true);
-			}*/
 			if (i == 2 && j == 2) {
-				gameField[i][j].setPlayer(true);
-
+				gameField[i][j].setIsPlayerHere(true);
 				gameField[i][j].setY(i);
 				gameField[i][j].setX(j);
 			}
@@ -106,22 +95,29 @@ void Game::startGame() {
 void Game::movement(int key) {
 	int px = player.getX();
 	int py = player.getY();
+
 	switch (key) {
-	case 119: if (py < arrLength + 1 && py >= 0) { player.setY(player.getY() + 1); } break; //w
-	case 115: if (py <= arrLength + 1 && py > 0) { player.setY(player.getY() - 1); } break; //s
-	case 97: if (px <= arrLength + 1 && px > 0) { player.setX(player.getX() - 1); } break; //a
-	case 100: if (px < arrLength + 1 && px >= 0) { player.setX(player.getX() + 1); } break; //d
+		//rewrite
+	case 119: if (py <= arrLength + 1 && py > 2) { player.setY(player.getY() - 1); } break; //w
+	case 115: if (py <= arrLength + 1 && py >= 1) { player.setY(player.getY() + 1); } break; //s
+	case 97: if (px <= arrLength + 1 && px > 2) { player.setX(player.getX() - 1); } break; //a
+	case 100: if (px < arrLength + 1 && px >= 2) { player.setX(player.getX() + 1); } break; //d
 	}
+	gameField[player.getOldX()][player.getOldY()].setIsPlayerHere(false);
+	gameField[px][py].setIsPlayerHere(true);
+	player.setOldX(px); player.setOldY(py);
+
 }
 
 void Game::movementSystem(int key) {
 	//game.arrLength - size of map 5x5, 7x7, 10x10
-	cout << key << endl;
-
 
 	// game.arrLength + 1 (np. 5+1=6) bo, 1,2,3,4,5 - pole gry, 0 i 6 to krancy karty
 	if (key == 119 || key == 115 || key == 97 || key == 100) {
 		movement(key);
+		//cout << player.getX() << player.getY() << endl;
+		console.drawMap(gameField, arrLength);
+
 	}
 	else {
 		if (key == 113 || key == 81) { // q | Q

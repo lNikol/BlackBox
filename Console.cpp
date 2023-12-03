@@ -3,61 +3,41 @@
 using namespace std;
 
 void Console::drawMap(Cell** gameField, int length) {
-	// if 5x5 -> length is 5	; i to Y; j to X
+	// if 5x5 -> length is 5;  i to Y; j to X
 	for (int i = 0; i < length + 4; i++) {
 		for (int j = 0; j < length + 4; j++) {
 			//cout << (gameField[i][j].getX()) << (gameField[i][j].getY()) << " ";
 			if (gameField[i][j].getIsAnswerHere()) {
-				if ((j == 0) && i < (length + 3)) cout << (gameField[i][j].getAnswerHere()) << " ";
-				else if (j == (length + 3) && i < (length + 3)) cout << " " << (gameField[i][j].getAnswerHere());
-				else if (j < length + 3) cout << (gameField[i][j].getAnswerHere()) << " ";
+				if (j < length + 2) cout << gameField[i][j].getAnswerHere() << " ";
+				else if (j == length + 2) cout << gameField[i][j].getAnswerHere();
+				else if (j == length + 3) cout << " " << (gameField[i][j].getAnswerHere());
 			}
 			else if (gameField[i][j].getIsBorderHere()) {
+				//cout << (gameField[i][j].getX()) << (gameField[i][j].getY()) << " ";
 				if (
-					(i == 1 && j != 1) && ((i == 1) && (j != length + 2)) // gorny 
+					(i == 1 && (j > 1 && j < length + 2	)) // gorny 
 					||
-					(((i == length + 2) && (j != length + 2)) && ((i == length + 2) && (j != 1)))
+					((i == length + 2) && (j > 1 && j < length + 2))
 					) // dolny
 				{
 					cout << (gameField[i][j].getBorderHere()) << (gameField[i][j].getBorderHere());
+					//cout << (gameField[i][j].getX()) << (gameField[i][j].getY()) << " ";
 				}
 				else cout << (gameField[i][j].getBorderHere());
+				if (j == (length)) cout << (gameField[i][j].getBorderHere()); // wyswietlanie brakujacego muru
+
 			}
-			else if (gameField[i][j].getPlayerHere()) cout << " P";
-			else if (j == length + 1) cout << ". ";// fix
+			else if (gameField[i][j].getIsPlayerHere()) {
+				if (j == length + 1)  cout << " P ";
+				else  cout << " P";
+			}
+			else if (j == length + 1) cout << " . ";
 			else cout << " .";
 		}
 		cout << endl;
 
 
 	}
-	//for (int i = 0; i < length + 2; i++) {
-	//	for (int j = 0; j < length + 2; j++) {
-	//		if (gameField[i][j].getBorderHere()) {
-
-	//			if (j == 0 && i == 0) cout << char(201);
-	//			else if (j == length + 1 && i == 0) cout << char(187);
-	//			else if (j == 0 && i < length + 1) cout << char(186);
-	//			else if (j == length + 1 && i < length + 1) cout << char(186);
-	//			else if (j == 0 && i == length + 1) cout << char(200);
-	//			else if (j == length + 1 && i == length + 1) cout << char(188);
-	//			else { cout << char(205); cout << char(205); }
-
-	//			//(i == 0) ? cout << char(201) : (j !=0 && j<length+2) ? cout << char(205) : cout << char(187); // draw top
-	//			//(i == length) ? cout << char(200) : (j == length + 2) ? cout << char(205) : cout << char(188); // draw down
-
-	//			//if (j == 0) cout << char(186);
-	//			//else if (j == length + 2) cout << " " << char(186);
-
-	//		}
-	//		else if (gameField[i][j].getPlayerHere()) {
-	//			cout << " P";
-	//		}
-	//		else cout << " .";
-	//	}
-	//	cout << endl;
-	//}
-
 }
 
 void Console::drawTopBorder(int length) {

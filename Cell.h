@@ -8,11 +8,12 @@ private:
 	unsigned char borderHere;
 	bool isAnswerHere = false;
 	unsigned char answerHere;
+	bool isSpaceHere = false;
 public:
 	void setAtom(bool);
 
-	void setPlayer(bool);
-	bool getPlayerHere();
+	void setIsPlayerHere(bool);
+	bool getIsPlayerHere();
 
 	void setBorderHere(unsigned char);
 	char getBorderHere();
@@ -29,4 +30,8 @@ public:
 	void setIsAnswerHere(bool);
 	bool getIsAnswerHere();
 	char getAnswerHere();
+
+	void setIsSpaceHere(bool);
+	bool getIsSpaceHere();
+
 };
