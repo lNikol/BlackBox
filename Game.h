@@ -9,9 +9,13 @@ private:
 	int counterOfCurrentChoices = 0; // ilosc poprawnie wyznaczonych atomow
 	int counterOfChoices = 0;
 	int maxAtoms;
+	int presentStage = 0;
+	int lastStage = 0;
 	bool isStarted = false;
 	bool showHelp = false;
 	Cell** gameField;
+	int fieldsSize;
+	Cell*** fields;
 public:
 	int arrLength = 5; // default information
 	Menu menu;
@@ -29,4 +33,8 @@ public:
 	void startGame();
 	void endGame();
 	Cell** getGameField();
+	Cell*** getFields();
+	void writeFieldInFields();
+	void increaseFieldsSize();
+
 };

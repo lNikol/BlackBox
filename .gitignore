@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+x64/Debug
+*.ilk
+*.log
+*.idb
+*.vcxproj
+*.tlog

@@ -7,9 +7,6 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 	if (isGameStarted) {
 		cout << "\nThere are " << atoms << " atoms on the map\n";
 	}
-	else {
-		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n";
-	}
 
 	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
@@ -42,7 +39,7 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 			else if (gameField[i][j].getIsBorderHere()) {
 				if (gameField[i][j].getIsPlayerHere()) {
 					showPlayer(j, i, length);
-					if ((j == (length + 2)) && (i == 2 || i == length + 3)) cout << (gameField[i][j].getBorderHere());
+					if ((j == (length + 2)) && (i == 2 || i == length + 3)) cout << gameField[i][j].getBorderHere();
 					shown = true; // tylko dla murow
 				}
 				else {
@@ -52,7 +49,7 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 						((i == length + 3) && (j > 2 && j < length + 3))
 						) // dolny
 					{
-						cout << (gameField[i][j].getBorderHere()) << (gameField[i][j].getBorderHere());
+						cout << gameField[i][j].getBorderHere() << gameField[i][j].getBorderHere();
 					}
 					else cout << (gameField[i][j].getBorderHere());
 					if (j == length + 2) cout << (gameField[i][j].getBorderHere());
@@ -60,50 +57,46 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 			}
 			else if (gameField[i][j].getIsPlayerHere() && shown != true) {
 				if (gameField[i][j].getAtomHere()) { // delete
-					if (j == length + 2)  cout << " O ";
-					else  cout << " O";
+					showSymbol(length + 2, j, 'O');
 				}
 				else if (gameField[i][j].getAtomIsHereByPlayer() && showHelp == false) {
-					if (j == length + 2)  cout << " o ";
-					else  cout << " o";
+					showSymbol(length + 2, j, 'o');
 				}
 				else {
-					if (j == length + 2)  cout << " P ";
-					else cout << " P";
+					showSymbol(length + 2, j, 'P');
 				}
 			}
 			else if ((j >= 3 && j < length + 3) && (i >= 3 && i < (length + 3))) {
 				if (gameField[i][j].getAtomIsHereByPlayer()) {
 					if (isGameStarted == false) {
 						if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere() == false) {
-							if (j == length + 2)  cout << " X ";
-							else  cout << " X";
+							showSymbol(length + 2, j, 'X');
 						}
 						else if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere())
 						{
 							currentChoices++;
-							if (j == length + 2)  cout << " O ";
-							else  cout << " O";
+							showSymbol(length + 2, j, 'O');
 						}
 					}
 					else {
-						if (j == length + 2)  cout << " o ";
-						else  cout << " o";
+						showSymbol(length + 2, j, 'o');
 					}
 				}
 				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
-					if (j == length + 2)  cout << " O ";
-					else  cout << " O";
+					showSymbol(length + 2, j, 'O');
 				}
 				else {
-					if (j == length + 2) cout << " . ";
-					else cout << " .";
+					showSymbol(length + 2, j, '.');
 				}
 			}
 		}
 		cout << endl;
 	}
-	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+
+	if(!isGameStarted){
+		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n";
+	}
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
 void Console::showPlayer(int x, int y, int length) {
@@ -114,4 +107,9 @@ void Console::showPlayer(int x, int y, int length) {
 	else if ((y == 2 || y == length + 3) && (x >= 2 && x <= length + 3)) cout << " P"; // poziomy mur
 	else if (x == (length + 4)) cout << " P";
 	else cout << "P ";
+}
+
+void Console::showSymbol(int max, int j, char s) {
+	if (j == max)  cout << " " << s << " ";
+	else  cout << " " << s;
 }

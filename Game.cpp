@@ -12,7 +12,25 @@ void Game::shootSystem() {
 }
 
 Cell** Game::getGameField() { return gameField; };
+Cell*** Game::getFields() { return fields; };
 
+void Game::writeFieldInFields() {
+	lastStage = presentStage;
+	if (fieldsSize == presentStage) {
+		cout << "W rozszerzeniu" << endl;
+		cout << fieldsSize << endl;
+		increaseFieldsSize();
+
+	}
+	cout << "Po rozszerzeniu" << endl;
+	cout << fieldsSize << endl;
+	fields[presentStage] = gameField;
+	presentStage++;
+	cout << presentStage << endl;
+}
+void Game::increaseFieldsSize() {
+	fieldsSize += 10;
+}
 
 void Game::start() {
 	menu.printMenu();
@@ -99,6 +117,9 @@ void Game::startGame() {
 		cout << endl;
 	}
 	randomAtoms();
+	fieldsSize = arrLength * 20;
+	fields = new Cell **[fieldsSize];
+	writeFieldInFields();
 
 }
 
@@ -125,7 +146,9 @@ void Game::movement(int key) {
 	gameField[player.getOldY()][player.getOldX()].setIsPlayerHere(false);
 	gameField[py][px].setIsPlayerHere(true);
 	player.setOldX(px); player.setOldY(py);
-
+	
+	writeFieldInFields();
+	
 	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 
 }
@@ -167,6 +190,7 @@ void Game::keySystem(int key) {
 		else if (key == 72) { // H
 			showHelp = true;
 			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+			writeFieldInFields();
 			showHelp = false;
 		}
 		else if (key == 107) { // k
@@ -228,6 +252,7 @@ void Game::endGame() {
 	if (counterOfChoices == maxAtoms) {
 		isStarted = false;
 		console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+		delete[] fields;
 		delete[] gameField;
 	}
 	else {

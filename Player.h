@@ -1,21 +1,16 @@
 #pragma once
-
-class Player {
+#include "Main.h"
+class Player : public Main {
 private:
-	int x, y;
 	int oldX, oldY;
 
 public:
-	Player();
-	void setX(int);
-	void setY(int);
+	Player(int fx = 3, int fy = 3, int fOldX = 3, int fOldY = 3): Main(fx,fy), oldX(fOldX), oldY(fOldY) {};
 	void setOldX(int);
 	void setOldY(int);
 	void moveX(int);
 	void moveY(int);
 
-	int getX();
-	int getY();
 	int getOldX();
 	int getOldY();
 };
