@@ -1,9 +1,16 @@
 #include "Cell.h"
 
-
-void Cell::setAtom(bool isAtom) {
+void Cell::setAtomHere(bool isAtom) {
 	isAtomHere = isAtom;
 };
+bool Cell::getAtomHere() { return isAtomHere; }
+
+void Cell::setAtomIsHereByPlayer(bool isAtom) {
+	atomIsHereByPlayer = isAtom;
+};
+bool Cell::getAtomIsHereByPlayer() { return atomIsHereByPlayer; }
+
+
 void Cell::setIsPlayerHere(bool fisPlayerHere) {
 	isPlayerHere = fisPlayerHere;
 }

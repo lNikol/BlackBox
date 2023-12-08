@@ -5,12 +5,9 @@ ACiR4
 Black Box
 */
 
-
 #include <iostream>
-#include "Console.h"
 #include "Game.h"
 using namespace std;
-
 
 int main()
 {

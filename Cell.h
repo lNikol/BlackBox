@@ -13,7 +13,12 @@ private:
 	unsigned char answerHere;
 	bool isSpaceHere = false;
 public:
-	void setAtom(bool);
+	void setAtomIsHereByPlayer(bool);
+	bool getAtomIsHereByPlayer();
+
+	
+	void setAtomHere(bool);
+	bool getAtomHere();
 
 	void setIsPlayerHere(bool);
 	bool getIsPlayerHere();

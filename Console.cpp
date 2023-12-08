@@ -2,13 +2,20 @@
 #include "Console.h"
 using namespace std;
 
-void Console::drawMap(Cell** gameField, int length) {
+void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atoms, int& currentChoices, bool showHelp) {
 	// if 5x5 -> length is 5;  i to Y; j to X
+	if (isGameStarted) {
+		cout << "\nThere are " << atoms << " atoms on the map\n";
+	}
+	else {
+		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n";
+	}
+
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+
 	for (int i = 0; i < length + 6; i++) {
 		for (int j = 0; j < length + 6; j++) {
 			bool shown = false;
-
-			//cout << (gameField[i][j].getX()) << (gameField[i][j].getY()) << " ";
 			if (gameField[i][j].getIsAnswerHere()) {
 				if (j < length + 4) cout << gameField[i][j].getAnswerHere() << " ";
 				else if (j == length + 4) cout << gameField[i][j].getAnswerHere();
@@ -20,25 +27,25 @@ void Console::drawMap(Cell** gameField, int length) {
 					showPlayer(j, i, length);
 				}
 				else {
-					if (j == 1 && (i >= 1 && i <= length + 4)) {
-					cout << "  ";
-				}
-				else if ((j >= 2 && j < (length + 3)) && (i == 1 || i == length + 4)) {
-					cout << "  ";
-				}
-				else if (j == (length + 3)) cout << " ";
-				else if (j == (length + 4) && (i >= 1 && i <= (length + 4))) {
-					cout << "  ";
-				}	
+					if (j == 1 && (i >= 1 && i <= length + 4)
+						||
+						(j >= 2 && j < (length + 3)) && (i == 1 || i == length + 4))
+					{
+						cout << "  ";
+					}
+					else if (j == (length + 3)) cout << " ";
+					else if (j == (length + 4) && (i >= 1 && i <= (length + 4))) {
+						cout << "  ";
+					}
 				}
 			}
 			else if (gameField[i][j].getIsBorderHere()) {
 				if (gameField[i][j].getIsPlayerHere()) {
 					showPlayer(j, i, length);
-					if (( j == (length + 2)) && (i == 2 || i == length + 3)) cout << (gameField[i][j].getBorderHere());
+					if ((j == (length + 2)) && (i == 2 || i == length + 3)) cout << (gameField[i][j].getBorderHere());
 					shown = true; // tylko dla murow
 				}
-				else{
+				else {
 					if (
 						(i == 2 && (j > 2 && j < length + 3)) // gorny 
 						||
@@ -46,65 +53,57 @@ void Console::drawMap(Cell** gameField, int length) {
 						) // dolny
 					{
 						cout << (gameField[i][j].getBorderHere()) << (gameField[i][j].getBorderHere());
-						//cout << (gameField[i][j].getX()) << (gameField[i][j].getY()) << " ";
 					}
 					else cout << (gameField[i][j].getBorderHere());
 					if (j == length + 2) cout << (gameField[i][j].getBorderHere());
 				}
 			}
-			else if (gameField[i][j].getIsPlayerHere() && shown!=true) {
-				if (j == length + 2)  cout << " P ";
-				else  cout << " P";
+			else if (gameField[i][j].getIsPlayerHere() && shown != true) {
+				if (gameField[i][j].getAtomHere()) { // delete
+					if (j == length + 2)  cout << " O ";
+					else  cout << " O";
+				}
+				else if (gameField[i][j].getAtomIsHereByPlayer() && showHelp == false) {
+					if (j == length + 2)  cout << " o ";
+					else  cout << " o";
+				}
+				else {
+					if (j == length + 2)  cout << " P ";
+					else cout << " P";
+				}
 			}
 			else if ((j >= 3 && j < length + 3) && (i >= 3 && i < (length + 3))) {
-				if (j == length + 2) cout << " . ";
-				else cout << " .";
+				if (gameField[i][j].getAtomIsHereByPlayer()) {
+					if (isGameStarted == false) {
+						if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere() == false) {
+							if (j == length + 2)  cout << " X ";
+							else  cout << " X";
+						}
+						else if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere())
+						{
+							currentChoices++;
+							if (j == length + 2)  cout << " O ";
+							else  cout << " O";
+						}
+					}
+					else {
+						if (j == length + 2)  cout << " o ";
+						else  cout << " o";
+					}
+				}
+				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
+					if (j == length + 2)  cout << " O ";
+					else  cout << " O";
+				}
+				else {
+					if (j == length + 2) cout << " . ";
+					else cout << " .";
+				}
 			}
 		}
 		cout << endl;
 	}
-}
-
-void Console::drawTopBorder(int length) {
-	cout << "\n";
-	length = length * 2 + 1 + 2; //*2 = length of space+cell, +2 = line border
-
-	cout << "    "; // adding space for ray output 3 space for number 1 for letter
-
-	for (int i = 0; i < length; i++) {
-		(i == 0) ? cout << char(201) : (i == length - 1) ? cout << char(187) : cout << char(205);
-	}
-	cout << endl;
-}
-
-void Console::drawBorderContent(int length) {
-
-	for (int i = 0; i < length; i++)
-	{
-		cout << "    "; // adding space for ray output 3 space for number 1 for letter
-
-
-		for (int j = 0; j < length + 2; j++) {
-			if (j == 0) cout << char(186);
-			else if (j == length + 2 - 1) cout << " " << char(186);
-			else cout << " .";
-		}
-		cout << "    "; // adding space for ray output 3 space for number 1 for letter
-
-
-		cout << endl;
-
-	}
-
-}
-
-void Console::drawBottomBorder(int length) {
-	cout << "    "; // adding space for ray output 3 space for number 1 for letter
-
-	length = length * 2 + 1 + 2; //*2 = length of space+cell, +2 = line border
-	for (int i = 0; i < length; i++) (i == 0) ? cout << char(200) : (i == length - 1) ? cout << char(188) : cout << char(205);
-	cout << endl;
-	cout << "\n";
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
 void Console::showPlayer(int x, int y, int length) {
