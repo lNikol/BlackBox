@@ -26,14 +26,14 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 				else {
 					if (j == 1 && (i >= 1 && i <= length + 4)
 						||
-						(j >= 2 && j < (length + 3)) && (i == 1 || i == length + 4))
+						(j >= 2 && j < (length + 3)) && (i == 1 || i == length + 4)
+						||
+						(j == (length + 4) && (i >= 1 && i <= (length + 4)))
+						)
 					{
 						cout << "  ";
 					}
 					else if (j == (length + 3)) cout << " ";
-					else if (j == (length + 4) && (i >= 1 && i <= (length + 4))) {
-						cout << "  ";
-					}
 				}
 			}
 			else if (gameField[i][j].getIsBorderHere()) {
@@ -51,11 +51,11 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 					{
 						cout << gameField[i][j].getBorderHere() << gameField[i][j].getBorderHere();
 					}
-					else cout << (gameField[i][j].getBorderHere());
-					if (j == length + 2) cout << (gameField[i][j].getBorderHere());
+					else cout << gameField[i][j].getBorderHere();
+					if (j == length + 2) cout << gameField[i][j].getBorderHere();
 				}
 			}
-			else if (gameField[i][j].getIsPlayerHere() && shown != true) {
+			else if (gameField[i][j].getIsPlayerHere() && shown != true && isGameStarted) {
 				if (gameField[i][j].getAtomHere()) { // delete
 					showSymbol(length + 2, j, 'O');
 				}

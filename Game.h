@@ -27,7 +27,6 @@ public:
 	void movement(int);
 	void keySystem(int);
 	void shootSystem();
-	void render();
 	void setAtomByPlayer();
 	void start();
 	void startGame();
@@ -36,5 +35,7 @@ public:
 	Cell*** getFields();
 	void writeFieldInFields();
 	void increaseFieldsSize();
+	void undo();
+	void redo();
 
 };

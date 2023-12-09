@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include "Game.h"
 #include "stdlib.h"
@@ -15,21 +15,93 @@ Cell** Game::getGameField() { return gameField; };
 Cell*** Game::getFields() { return fields; };
 
 void Game::writeFieldInFields() {
-	lastStage = presentStage;
 	if (fieldsSize == presentStage) {
-		cout << "W rozszerzeniu" << endl;
-		cout << fieldsSize << endl;
 		increaseFieldsSize();
-
 	}
-	cout << "Po rozszerzeniu" << endl;
-	cout << fieldsSize << endl;
-	fields[presentStage] = gameField;
+	for (int j = 0; j < arrLength + 6; j++) {
+		for (int k = 0; k < arrLength + 6; k++) {
+			fields[presentStage][j][k] = gameField[j][k];
+		}
+	}
+	lastStage = presentStage;
 	presentStage++;
-	cout << presentStage << endl;
 }
+
 void Game::increaseFieldsSize() {
 	fieldsSize += 10;
+
+	Cell*** fields2 = new Cell * *[fieldsSize];
+	for (int i = 0; i < fieldsSize; i++) {
+		fields2[i] = new Cell * [arrLength + 6];
+		for (int j = 0; j < arrLength + 6; j++) {
+			fields2[i][j] = new Cell[arrLength + 6];
+		}
+	}
+	// copy information from fields to fields2
+	for (int i = 0; i < fieldsSize - 10; i++) {
+		for (int j = 0; j < arrLength + 6; j++) {
+			for (int k = 0; k < arrLength + 6; k++) {
+				fields2[i][j][k] = fields[i][j][k];
+			}
+		}
+	}
+
+	for (int i = 0; i < fieldsSize - 10; i++) {
+		for (int j = 0; j < arrLength + 6; ++j) {
+			delete[] fields[i][j];
+		}
+		delete[] fields[i];
+	}
+	delete[] fields;
+
+	fields = new Cell * *[fieldsSize];
+	for (int i = 0; i < fieldsSize; i++) {
+		fields[i] = new Cell * [arrLength + 6];
+		for (int j = 0; j < arrLength + 6; j++) {
+			fields[i][j] = new Cell[arrLength + 6];
+		}
+	}
+	// copy information from fields2 to fields
+	for (int i = 0; i < fieldsSize - 10; i++) {
+		for (int j = 0; j < arrLength + 6; j++) {
+			for (int k = 0; k < arrLength + 6; k++) {
+				fields[i][j][k] = fields2[i][j][k];
+			}
+		}
+	}
+
+	for (int i = 0; i < fieldsSize; ++i) {
+		for (int j = 0; j < arrLength + 6; ++j) {
+			delete[] fields2[i][j];
+		}
+		delete fields2[i];
+	}
+	delete[] fields2;
+}
+
+void Game::undo() {
+	if (lastStage >= 1) {
+		lastStage--;
+		int tempPlayerChoices = 0;
+		for (int j = 0; j < arrLength + 6; j++) {
+			for (int k = 0; k < arrLength + 6; k++) {
+				if (fields[lastStage][j][k].getIsPlayerHere()) {
+					player.setOldX(player.getX()); player.setOldY(player.getY());
+					player.setX(k); player.setY(j);
+				}
+				if (fields[lastStage][j][k].getAtomIsHereByPlayer()) {
+					cout << fields[lastStage][j][k].getAtomIsHereByPlayer() << " is " << j << " " << k << endl;
+					tempPlayerChoices++;
+				}
+				gameField[j][k] = fields[lastStage][j][k];
+
+			}
+		}
+		counterOfChoices = tempPlayerChoices;
+		presentStage--;
+	}
+	else cout << "Undo cannot be performed\n";
+
 }
 
 void Game::start() {
@@ -114,11 +186,18 @@ void Game::startGame() {
 			}
 			if (i == 3 && j == 3) gameField[i][j].setIsPlayerHere(true);
 		}
-		cout << endl;
 	}
+	
 	randomAtoms();
-	fieldsSize = arrLength * 20;
+	
+	fieldsSize = arrLength * 2;
 	fields = new Cell **[fieldsSize];
+	for (int i = 0; i < fieldsSize; i++) {
+		fields[i] = new Cell * [arrLength + 6];
+		for (int j = 0; j < arrLength + 6; j++) {
+			fields[i][j] = new Cell[arrLength + 6];
+		}
+	}
 	writeFieldInFields();
 
 }
@@ -126,6 +205,7 @@ void Game::startGame() {
 void Game::movement(int key) {
 	int px = player.getX();
 	int py = player.getY();
+	player.setOldX(px); player.setOldY(py);
 
 	switch (key) {
 	case 87:
@@ -145,7 +225,6 @@ void Game::movement(int key) {
 
 	gameField[player.getOldY()][player.getOldX()].setIsPlayerHere(false);
 	gameField[py][px].setIsPlayerHere(true);
-	player.setOldX(px); player.setOldY(py);
 	
 	writeFieldInFields();
 	
@@ -169,7 +248,8 @@ void Game::keySystem(int key) {
 
 		}
 		else if (key == 117 || key == 85) { // u | U
-
+			undo();
+			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		}
 		else if (key == 114 || key == 82) { // r | R
 
@@ -196,34 +276,37 @@ void Game::keySystem(int key) {
 		else if (key == 107) { // k
 			endGame();
 		}
+		else if (key == 90) {}//Z
 		else {
 			cout << "Wrong symbol" << endl;
 		}
 	}
 }
 
-void Game::render() {
-
-}
-
 void Game::setAtomByPlayer() {
 	int px = player.getX();
 	int py = player.getY();
-	if (gameField[py][px].getAtomIsHereByPlayer()) {
-		gameField[py][px].setAtomIsHereByPlayer(false);
-		counterOfChoices--;
-	}
-	else {
-		if (counterOfChoices < maxAtoms) {
-			gameField[py][px].setAtomIsHereByPlayer(true);
-			counterOfChoices++;
+	if (gameField[py][px].getIsBorderHere() == false && gameField[py][px].getIsSpaceHere() == false) {
+		if (gameField[py][px].getAtomIsHereByPlayer()) {
+			gameField[py][px].setAtomIsHereByPlayer(false);
+			counterOfChoices--;
 		}
-		else cout << "Limit of choices\n";
+		else {
+			if (counterOfChoices < maxAtoms) {
+				gameField[py][px].setAtomIsHereByPlayer(true);
+				counterOfChoices++;
+			}
+			else cout << "Limit of choices\n";
+		}
 	}
+	else if (gameField[py][px].getIsSpaceHere()) {
+		cout << "You can't put a mark here, because this isn't a playing field.\n";
+	}
+	else cout << "You can't put a mark here, because it's a wall\n";
 }
 
 void Game::randomAtoms() {
-	srand(0);
+	srand(time(NULL));
 	int rand1 = rand() % arrLength + 3, rand2 = rand() % arrLength + 3;
 
 	switch (arrLength)
@@ -252,7 +335,9 @@ void Game::endGame() {
 	if (counterOfChoices == maxAtoms) {
 		isStarted = false;
 		console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
-		delete[] fields;
+		for (int i = 0; i < arrLength + 6; ++i) {
+			delete[] gameField[i];
+		}
 		delete[] gameField;
 	}
 	else {
