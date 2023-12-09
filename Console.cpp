@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "Console.h"
 using namespace std;
 
@@ -8,33 +8,28 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 		cout << "\nThere are " << atoms << " atoms on the map\n";
 	}
 
-	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
 	for (int i = 0; i < length + 6; i++) {
 		for (int j = 0; j < length + 6; j++) {
 			bool shown = false;
-			if (gameField[i][j].getIsAnswerHere()) {
-				if (j < length + 4) cout << gameField[i][j].getAnswerHere() << " ";
-				else if (j == length + 4) cout << gameField[i][j].getAnswerHere();
-				else if (j == length + 5) cout << " " << (gameField[i][j].getAnswerHere());
+			if (gameField[i][j].getIsHitHere()){
+				if (j < length + 4) cout << ' ' << gameField[i][j].getHitHere();
+				else if (j == length + 4) cout << ' ' << gameField[i][j].getHitHere();
+				else if (j == length + 5) cout << ' ' << gameField[i][j].getHitHere();
 			}
 
-			if (gameField[i][j].getIsSpaceHere()) { // optymalizacja!
-				if (gameField[i][j].getIsPlayerHere()) {
-					showPlayer(j, i, length);
+			if (gameField[i][j].getIsSpaceHere()) {
+				if (j == 1 && (i >= 1 && i <= length + 4)){
+					if (j == 1 && i == 1) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+					else if (j == 1 && i == length + 4)cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+					else cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1() << ' ';
 				}
-				else {
-					if (j == 1 && (i >= 1 && i <= length + 4)
-						||
-						(j >= 2 && j < (length + 3)) && (i == 1 || i == length + 4)
-						||
-						(j == (length + 4) && (i >= 1 && i <= (length + 4)))
-						)
-					{
-						cout << "  ";
-					}
-					else if (j == (length + 3)) cout << " ";
-				}
+				else if (j == 2) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+				else if (j > 2 && j < (length + 3) && (i == 1 || i == length + 4)) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+
+				else if (j == (length + 4) && (i >= 1 && i <= (length + 4))) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+				else if (j == (length + 3)) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
 			}
 			else if (gameField[i][j].getIsBorderHere()) {
 				if (gameField[i][j].getIsPlayerHere()) {
@@ -85,6 +80,9 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
 					showSymbol(length + 2, j, 'O');
 				}
+				else if (gameField[i][j].getIsRayHere()) {
+					showSymbol(length + 2, j, 'R');
+				}
 				else {
 					showSymbol(length + 2, j, '.');
 				}
@@ -93,10 +91,10 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 		cout << endl;
 	}
 
-	if(!isGameStarted){
+	if (!isGameStarted) {
 		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n\n";
 	}
-	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
 void Console::showPlayer(int x, int y, int length) {

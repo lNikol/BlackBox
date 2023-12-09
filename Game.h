@@ -43,4 +43,6 @@ public:
 	void undo();
 	void redo();
 
+	void scanPlace(int x, int y);
+
 };

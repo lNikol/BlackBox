@@ -16,6 +16,7 @@ void Menu::gameMenu() {
 	cout << "u|U) Undo\n";
 	cout << "r|R) Redo\n";
 	cout << "x) Restart this map\n";
+	cout << "q|Q) Return to the menu\n";
 	cout << "k) Finish the game\n\n";
 }
 

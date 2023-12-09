@@ -1,14 +1,91 @@
 ﻿#include <iostream>
 #include <string>
+#include <stdio.h>
 #include "Game.h"
-#include "stdlib.h"
+#include "Ray.h"
 using namespace std;
 
 void Game::shootSystem() {
-	if (player.getX() == 0 && player.getY() == 0) cout << "lewy_dol\n";
-	else if (player.getX() == (arrLength + 2) && player.getY() == 0) cout << "prawy_dolny\n";
-	else if (player.getX() == 0 && player.getY() == (arrLength + 2)) cout << "lew_gor\n";
-	else if (player.getX() == (arrLength + 2) && player.getY() == (arrLength + 2)) cout << "prawy_gor\n";
+	if ((player.getX() == 2 && player.getY() == 2)
+		|| (player.getX() == (arrLength + 3) && player.getY() == 2)
+		|| (player.getX() == 2 && player.getY() == (arrLength + 3))
+		|| (player.getX() == (arrLength + 3) && player.getY() == (arrLength + 3))
+		) cout << "You can't shoot, you're at the end of the border\n";
+	else
+	{
+		int px = player.getX();
+		int py = player.getY();
+		if (py == arrLength + 3 || py == 2 ||
+			(px == arrLength + 3 && py < (arrLength + 3)) ||
+			(px == 2 && py < (arrLength + 3)))
+		{
+			Ray ray;
+			ray.setX(px); ray.setY(py);
+			
+			if (py == arrLength + 3) {
+				ray.setDirection('w');
+				ray.setX(px);
+				ray.setY(py - 1);
+			}
+			else if (py == 2) {
+				ray.setDirection('s');
+				ray.setX(px);
+				ray.setY(py + 1);
+			}
+			else if (px == arrLength + 3 && py < (arrLength + 3)) {
+				ray.setDirection('a');
+				ray.setX(px - 1);
+				ray.setY(py);
+			}
+			else if (px == 2 && py < (arrLength + 3)) {
+				ray.setDirection('d');
+				ray.setX(px + 1);
+				ray.setY(py);
+			}
+			int rx = ray.getX();
+			int ry = ray.getY();
+
+			while ((rx > 2 && rx < (arrLength + 3)) && (ry > 2 && ry < (arrLength + 3))) {
+				gameField[ry][rx].setIsRayHere(true);
+				console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+
+				ray.setOldY(ry); ray.setOldX(rx);
+				gameField[ray.getOldY()][ray.getOldX()].setIsRayHere(false);
+
+				switch (ray.getDirection()) {
+					case 'w': ray.setY(ry - 1); break;
+					case 's': ray.setY(ry + 1); break;
+					case 'a': ray.setX(rx - 1); break;
+					case 'd': ray.setX(rx + 1); break;
+					default: break;
+				}
+				rx = ray.getX();
+				ry = ray.getY();
+			}
+			cout << rx << " " << ry << endl;
+			if (rx == 2) {
+				gameField[ry][0].setHitHere('A');
+				gameField[ry][0].setIsHitHere(true);
+			}
+			else if (rx == arrLength + 3) {
+				gameField[ry][arrLength + 5].setHitHere('D');
+				gameField[ry][arrLength + 5].setIsHitHere(true);
+			}
+			else if (ry == 2) {
+				gameField[0][rx].setHitHere('W');
+				gameField[0][rx].setIsHitHere(true);
+
+			}
+			else if (ry == arrLength + 3) {
+				cout << rx << " " << arrLength + 5 << endl;
+				gameField[arrLength + 5][rx].setHitHere('S');
+				gameField[arrLength + 5][rx].setIsHitHere(true);
+			}
+
+		}
+		else cout << "You can't shoot, you're not on the border\n";
+
+	}
 }
 
 Cell** Game::getGameField() { return gameField; };
@@ -80,7 +157,7 @@ void Game::increaseFieldsSize() {
 }
 
 void Game::redo() {
-
+	
 }
 
 void Game::undo() {
@@ -162,19 +239,21 @@ void Game::startGame() {
 			gameField[i][j].setY(i);
 
 			if ((i == 0 || i == arrLength + 5) || (j == 0 || j == arrLength + 5)) {
-				gameField[i][j].setIsAnswerHere(true);
-				gameField[i][j].setAnswerHere('A'); // !!!
+				gameField[i][j].setIsHitHere(true);
 			}
 
 			if ((j >= 1 && j <= arrLength + 4) && (i >= 1 && i <= arrLength + 4)) { // spacje
 				if (j == 1 && (i >= 1 && i <= arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
+					gameField[i][j].setNumberOfHitHere1('9');
 				}
 				else if (j == (arrLength + 4) && (i >= 1 && i <= arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
+					gameField[i][j].setNumberOfHitHere1('9');
 				}
 				else if ((j >= 1 && j <= (arrLength + 4)) && (i == 1 || i == arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
+					gameField[i][j].setNumberOfHitHere1('9');
 				}
 			}
 
@@ -234,16 +313,16 @@ void Game::movement(int key) {
 
 	switch (key) {
 	case 87:
-	case 119: if (py <= arrLength + 4 && py > 1) { player.setY(player.getY() - 1); } break; // W || w
+	case 119: if (py <= arrLength + 3 && py > 2) { player.setY(player.getY() - 1); } break; // W || w
 
 	case 83:
-	case 115: if (py < arrLength + 4 && py >= 1) { player.setY(player.getY() + 1); } break; // S || s
+	case 115: if (py < arrLength + 3 && py >= 2) { player.setY(player.getY() + 1); } break; // S || s
 
 	case 65:
-	case 97: if (px <= arrLength + 4 && px > 1) { player.setX(player.getX() - 1); } break; // A || a
+	case 97: if (px <= arrLength + 3 && px > 2) { player.setX(player.getX() - 1); } break; // A || a
 
 	case 68:
-	case 100: if (px < arrLength + 4 && px >= 1) { player.setX(player.getX() + 1); } break; // D || d
+	case 100: if (px < arrLength + 3 && px >= 2) { player.setX(player.getX() + 1); } break; // D || d
 	}
 	px = player.getX();
 	py = player.getY();
@@ -275,7 +354,6 @@ void Game::keySystem(int key) {
 			redo();
 		}
 		else if (key == 32) { // spacja
-			cout << "shoot\n";
 			shootSystem();
 		}
 		else if (key == 109) {// m
@@ -287,7 +365,13 @@ void Game::keySystem(int key) {
 		else if (key == 72) { // H
 			showHelp = true;
 			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+
+			clock_t endwait;
+			endwait = clock() + 1000;
+			while (clock() < endwait) {
+			}
 			showHelp = false;
+			cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		}
 		else if (key == 113 || key == 81) { // q | Q 
@@ -305,10 +389,9 @@ void Game::keySystem(int key) {
 		else if (key == 107 || key == 112) { // k || p
 			if (key == 112) isPaused = true; // p
 			endGame();
-			menu.printMenu();
+			if(counterOfChoices == maxAtoms) menu.printMenu();
 		}
 		
-
 		else if (key == 90) {}//Z
 		else {
 			cout << "Wrong symbol" << endl;
@@ -319,7 +402,7 @@ void Game::keySystem(int key) {
 void Game::setAtomByPlayer() {
 	int px = player.getX();
 	int py = player.getY();
-	if (gameField[py][px].getIsBorderHere() == false && gameField[py][px].getIsSpaceHere() == false) {
+	if (gameField[py][px].getIsBorderHere() == false) {
 		if (gameField[py][px].getAtomIsHereByPlayer()) {
 			gameField[py][px].setAtomIsHereByPlayer(false);
 			counterOfChoices--;
@@ -332,10 +415,24 @@ void Game::setAtomByPlayer() {
 			else cout << "Limit of choices\n";
 		}
 	}
-	else if (gameField[py][px].getIsSpaceHere()) {
-		cout << "You can't put a mark here, because this isn't a playing field.\n";
-	}
 	else cout << "You can't put a mark here, because it's a wall\n";
+}
+
+void Game::scanPlace(int x, int y) {
+	int neighborSize = 3;
+	int startRow = x - 1;
+	int startCol = y - 1;
+
+	for (int i = 0; i < neighborSize; ++i) {
+		for (int j = 0; j < neighborSize; ++j) {
+			int newRow = startRow + i;
+			int newCol = startCol + j;
+			if (newRow >= 0 && newRow < (arrLength + 3) && newCol >= 0 && newCol < (arrLength + 3)) {
+				gameField[newRow][newCol].setIsAtomArea(true);
+				gameField[newRow][newCol].setCounterOfAtomsArea(gameField[newRow][newCol].getCounterOfAtomsArea()+1);
+			}
+		}
+	}
 }
 
 void Game::randomAtoms() {
@@ -347,12 +444,13 @@ void Game::randomAtoms() {
 	case 5: maxAtoms = 3; break;
 	case 8: maxAtoms = 5; break;
 	case 10: maxAtoms = 8; break;
-	default:break;
+	default: break;
 	}
 
 	for (int i = 0; i < maxAtoms; i++) {
 		if (gameField[rand1][rand2].getAtomHere() == false) {
 			gameField[rand1][rand2].setAtomHere(true);
+			scanPlace(rand1, rand2);
 		}
 		else {
 			while (gameField[rand1][rand2].getAtomHere() == true) {
@@ -360,6 +458,8 @@ void Game::randomAtoms() {
 				rand2 = rand() % arrLength + 3;
 			}
 			gameField[rand1][rand2].setAtomHere(true);
+			scanPlace(rand1, rand2);
+
 		}
 	}
 }

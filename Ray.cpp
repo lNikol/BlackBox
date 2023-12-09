@@ -1,19 +1,16 @@
 #include "Ray.h"
 
-void Ray::setX(int xt) { x = xt; }
-void Ray::setY(int yt) { y = yt; }
-
-int Ray::getX() { return x; }
-int Ray::getY() { return y; }
-
-
 void Ray::setOldX(int oldXt) { oldX = oldXt; }
-void Ray::setOldY(int oldYt) { oldY = oldYt; }
-
 int Ray::getOldX() { return oldX; }
+
+void Ray::setOldY(int oldYt) { oldY = oldYt; }
 int Ray::getOldY() { return oldY; }
 
+void Ray::setDirection(char d) { direction = d; }
+char Ray::getDirection() { return direction; }
 
+void Ray::setIsHit(bool s) { isHit = s; }
+bool Ray::getIsHit() { return isHit; }
 
 void Ray::setIsRefracted(bool fref) { isRefracted = fref; }
 bool Ray::getIsRefracted() { return isRefracted; }
