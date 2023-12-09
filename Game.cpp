@@ -15,30 +15,41 @@ void Game::shootSystem() {
 	{
 		int px = player.getX();
 		int py = player.getY();
+
 		if (py == arrLength + 3 || py == 2 ||
 			(px == arrLength + 3 && py < (arrLength + 3)) ||
 			(px == 2 && py < (arrLength + 3)))
 		{
+			shootCounter++;
+
 			Ray ray;
 			ray.setX(px); ray.setY(py);
-			
+
 			if (py == arrLength + 3) {
-				ray.setDirection('w');
+				setShootingInfo(px, arrLength + 4);
+				ray.setDirection('0');
+				ray.setStartDirection('0');
 				ray.setX(px);
 				ray.setY(py - 1);
 			}
 			else if (py == 2) {
-				ray.setDirection('s');
+				setShootingInfo(px, py - 1);
+				ray.setDirection('1');
+				ray.setStartDirection('1');
 				ray.setX(px);
 				ray.setY(py + 1);
 			}
 			else if (px == arrLength + 3 && py < (arrLength + 3)) {
-				ray.setDirection('a');
+				setShootingInfo(px + 1, py);
+				ray.setDirection('2');
+				ray.setStartDirection('2');
 				ray.setX(px - 1);
 				ray.setY(py);
 			}
 			else if (px == 2 && py < (arrLength + 3)) {
-				ray.setDirection('d');
+				setShootingInfo(px - 1, py);
+				ray.setDirection('3');
+				ray.setStartDirection('3');
 				ray.setX(px + 1);
 				ray.setY(py);
 			}
@@ -47,45 +58,142 @@ void Game::shootSystem() {
 
 			while ((rx > 2 && rx < (arrLength + 3)) && (ry > 2 && ry < (arrLength + 3))) {
 				gameField[ry][rx].setIsRayHere(true);
-				console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
-
+				//console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 				ray.setOldY(ry); ray.setOldX(rx);
+
 				gameField[ray.getOldY()][ray.getOldX()].setIsRayHere(false);
 
 				switch (ray.getDirection()) {
-					case 'w': ray.setY(ry - 1); break;
-					case 's': ray.setY(ry + 1); break;
-					case 'a': ray.setX(rx - 1); break;
-					case 'd': ray.setX(rx + 1); break;
+				case '0': // 0 - w - w gore
+					if (gameField[ry - 1][rx].getAtomHere() || gameField[ry][rx].getAtomHere()) {
+						std::cout << "case 0" << std::endl;
+						ray.setIsHit(true);
+						ray.setY(2);
+					} break;
+				case '1': // 1 - s - w dol	
+					if (gameField[ry + 1][rx].getAtomHere() || gameField[ry][rx].getAtomHere()) {
+						std::cout << "case 1" << std::endl;
+						ray.setIsHit(true);
+						ray.setY(arrLength + 3);
+					}
+					break;
+				case '2': // 2 - a - w lewo 
+					if (gameField[ry][rx - 1].getAtomHere() || gameField[ry][rx].getAtomHere()) {
+						std::cout << "case 2" << std::endl;
+						ray.setIsHit(true);
+						ray.setY(2);
+					}
+					break;
+				case '3': // 3 - d - w prawo
+					if (gameField[ry][rx + 1].getAtomHere() || gameField[ry][rx].getAtomHere()) {
+						std::cout << "case 3" << std::endl;
+						ray.setIsHit(true);
+						ray.setY(arrLength + 3);
+					}
+					break;
+				default: break;
+				}
+
+				if (ray.getIsHit() == false) {
+					switch (ray.getDirection()) {
+					case '0': ray.setY(ry - 1); break; // 0 - w - w gore
+					case '1': ray.setY(ry + 1); break; // 1 - s - w dol
+					case '2': ray.setX(rx - 1); break; // 2 - a - w lewo 
+					case '3': ray.setX(rx + 1); break; // 3 - d - w prawo
 					default: break;
+					}
+					int coun = gameField[ry][rx].getCounterOfAtomsArea();
+					cout << "coun " << coun << endl;
+
+					int res = (coun + int(ray.getDirection())) % 4;
+					cout << "res " << res << endl;
+
+					switch (ray.getStartDirection()) {
+						case '0': ray.setDirection('0'); break;
+						case '1': ray.setDirection('1'); break;
+						case '2': res = (coun * 2 + int(ray.getDirection())) % 4;
+							switch (res) {
+							case 0:break;
+							case 1:break;
+							case 2:break;
+							case 3:break;
+							default:break;
+							}
+							ray.setDirection('2'); break;
+						case '3': ray.setDirection('3'); break;
+						default: break;
+					}
+
+
+					switch (res) {
+					case 0: ray.setDirection('0'); break;
+					case 1: ray.setDirection('1'); break;
+					case 2: ray.setDirection('2'); break;
+					case 3: ray.setDirection('3'); break;
+					default:break;
+					}
+					cout << "rD " << ray.getDirection() << endl;
 				}
 				rx = ray.getX();
 				ry = ray.getY();
 			}
-			cout << rx << " " << ry << endl;
+
 			if (rx == 2) {
-				gameField[ry][0].setHitHere('A');
-				gameField[ry][0].setIsHitHere(true);
+				if (ray.getIsHit()) {
+					gameField[ry][0].setHitHere('H');
+					gameField[ry][0].setIsHitHere(true);
+				}
+				else if (ray.getIsRefracted()) {
+					gameField[ry][0].setHitHere('R');
+					gameField[ry][0].setIsHitHere(true);
+				}
+				setShootingInfo(rx - 1, ry);
 			}
 			else if (rx == arrLength + 3) {
-				gameField[ry][arrLength + 5].setHitHere('D');
-				gameField[ry][arrLength + 5].setIsHitHere(true);
+				if (ray.getIsHit()) {
+					gameField[ry][arrLength + 5].setHitHere('H');
+					gameField[ry][arrLength + 5].setIsHitHere(true);
+				}
+				else if (ray.getIsRefracted()) {
+					gameField[ry][arrLength + 5].setHitHere('R');
+					gameField[ry][arrLength + 5].setIsHitHere(true);
+				}
+				setShootingInfo(arrLength + 4, ry);
 			}
 			else if (ry == 2) {
-				gameField[0][rx].setHitHere('W');
-				gameField[0][rx].setIsHitHere(true);
-
+				if (ray.getIsHit()) {
+					gameField[0][rx].setHitHere('H');
+					gameField[0][rx].setIsHitHere(true);
+				}
+				else if (ray.getIsRefracted()) {
+					gameField[0][rx].setHitHere('R');
+					gameField[0][rx].setIsHitHere(true);
+				}
+				setShootingInfo(rx, ry - 1);
 			}
 			else if (ry == arrLength + 3) {
-				cout << rx << " " << arrLength + 5 << endl;
-				gameField[arrLength + 5][rx].setHitHere('S');
-				gameField[arrLength + 5][rx].setIsHitHere(true);
+				if (ray.getIsHit()) {
+					gameField[arrLength + 5][rx].setHitHere('H');
+					gameField[arrLength + 5][rx].setIsHitHere(true);
+				}
+				else if (ray.getIsRefracted()) {
+					gameField[arrLength + 5][rx].setHitHere('R');
+					gameField[arrLength + 5][rx].setIsHitHere(true);
+				}
+				setShootingInfo(rx, arrLength + 4);
 			}
-
 		}
 		else cout << "You can't shoot, you're not on the border\n";
 
 	}
+	writeFieldInFields();
+	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+
+}
+
+void Game::setShootingInfo(int x, int y) {
+	if (shootCounter >= 10) gameField[y][x].setNumberOfHitHere2('0' + (shootCounter / 10));
+	gameField[y][x].setNumberOfHitHere1('0' + (shootCounter % 10));
 }
 
 Cell** Game::getGameField() { return gameField; };
@@ -157,7 +265,7 @@ void Game::increaseFieldsSize() {
 }
 
 void Game::redo() {
-	
+
 }
 
 void Game::undo() {
@@ -196,11 +304,11 @@ void Game::start() {
 			startGame();
 			firstStart = false;
 		}
-		
+
 		cin.get(turn);
 
 		if (isStarted == false) {
-			if (turn > 48 && turn < 52 ) {
+			if (turn > 48 && turn < 52) {
 				menu.gameMenu();
 				switch (turn) {
 				case 49: arrLength = 5; break;
@@ -224,12 +332,13 @@ void Game::setDefault() {
 	isQuit = false;
 	counterOfChoices = 0;
 	counterOfCurrentChoices = 0;
+	shootCounter = 0;
 	player = Player();
 }
 
 void Game::startGame() {
 	setDefault();
-	
+
 	gameField = new Cell * [arrLength + 6];
 	for (int i = 0; i < arrLength + 6; i++) {
 		gameField[i] = new Cell[arrLength + 6];
@@ -245,15 +354,13 @@ void Game::startGame() {
 			if ((j >= 1 && j <= arrLength + 4) && (i >= 1 && i <= arrLength + 4)) { // spacje
 				if (j == 1 && (i >= 1 && i <= arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
-					gameField[i][j].setNumberOfHitHere1('9');
 				}
 				else if (j == (arrLength + 4) && (i >= 1 && i <= arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
-					gameField[i][j].setNumberOfHitHere1('9');
+
 				}
 				else if ((j >= 1 && j <= (arrLength + 4)) && (i == 1 || i == arrLength + 4)) {
 					gameField[i][j].setIsSpaceHere(true);
-					gameField[i][j].setNumberOfHitHere1('9');
 				}
 			}
 
@@ -289,11 +396,11 @@ void Game::startGame() {
 			if (i == 3 && j == 3) gameField[i][j].setIsPlayerHere(true);
 		}
 	}
-	
+
 	randomAtoms();
-	
+
 	fieldsSize = arrLength * 2;
-	fields = new Cell **[fieldsSize];
+	fields = new Cell * *[fieldsSize];
 	for (int i = 0; i < fieldsSize; i++) {
 		fields[i] = new Cell * [arrLength + 6];
 		for (int j = 0; j < arrLength + 6; j++) {
@@ -329,9 +436,9 @@ void Game::movement(int key) {
 
 	gameField[player.getOldY()][player.getOldX()].setIsPlayerHere(false);
 	gameField[py][px].setIsPlayerHere(true);
-	
+
 	writeFieldInFields();
-	
+
 	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 }
 
@@ -389,9 +496,9 @@ void Game::keySystem(int key) {
 		else if (key == 107 || key == 112) { // k || p
 			if (key == 112) isPaused = true; // p
 			endGame();
-			if(counterOfChoices == maxAtoms) menu.printMenu();
+			if (counterOfChoices == maxAtoms) menu.printMenu();
 		}
-		
+
 		else if (key == 90) {}//Z
 		else {
 			cout << "Wrong symbol" << endl;
@@ -429,7 +536,7 @@ void Game::scanPlace(int x, int y) {
 			int newCol = startCol + j;
 			if (newRow >= 0 && newRow < (arrLength + 3) && newCol >= 0 && newCol < (arrLength + 3)) {
 				gameField[newRow][newCol].setIsAtomArea(true);
-				gameField[newRow][newCol].setCounterOfAtomsArea(gameField[newRow][newCol].getCounterOfAtomsArea()+1);
+				gameField[newRow][newCol].setCounterOfAtomsArea(gameField[newRow][newCol].getCounterOfAtomsArea() + 1);
 			}
 		}
 	}
@@ -467,7 +574,7 @@ void Game::randomAtoms() {
 void Game::endGame() {
 	if ((counterOfChoices == maxAtoms) || isPaused) {
 		isStarted = false;
-		if(!isQuit)	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+		if (!isQuit)	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		for (int i = 0; i < arrLength + 6; ++i) {
 			delete[] gameField[i];
 		}

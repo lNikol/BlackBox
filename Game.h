@@ -8,6 +8,7 @@ class Game {
 private:
 	int counterOfCurrentChoices = 0; // ilosc poprawnie wyznaczonych atomow
 	int counterOfChoices = 0; // ilosc wyznaczonych atomow
+	int shootCounter = 0;
 	int maxAtoms;
 	int presentStage = 0;
 	int lastStage = 0;
@@ -43,6 +44,8 @@ public:
 	void undo();
 	void redo();
 
-	void scanPlace(int x, int y);
+	void setShootingInfo(int, int);
+
+	void scanPlace(int, int);
 
 };
