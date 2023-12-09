@@ -79,6 +79,10 @@ void Game::increaseFieldsSize() {
 	delete[] fields2;
 }
 
+void Game::redo() {
+
+}
+
 void Game::undo() {
 	if (lastStage >= 1) {
 		lastStage--;
@@ -94,42 +98,61 @@ void Game::undo() {
 					tempPlayerChoices++;
 				}
 				gameField[j][k] = fields[lastStage][j][k];
-
 			}
 		}
 		counterOfChoices = tempPlayerChoices;
 		presentStage--;
+		console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 	}
 	else cout << "Undo cannot be performed\n";
 
 }
 
 void Game::start() {
-	menu.printMenu();
+	menu.showAuthor();
 	char turn = '0';
+	bool firstStart = true;
 	while (turn != 'Z') {
-		cin.get(turn);
-		if (turn > 48 && turn < 52 && isStarted == false) {
-			menu.gameMenu();
-			switch (turn) {
-			case 49: arrLength = 5; break;
-			case 50: arrLength = 8; break;
-			case 51: arrLength = 10; break;
-			default: break;
-			}
+		if (firstStart) {
+			cout << "Write m for the game menu\n";
+			arrLength = 5;
 			startGame();
-			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+			firstStart = false;
+		}
+		
+		cin.get(turn);
 
+		if (isStarted == false) {
+			if (turn > 48 && turn < 52 ) {
+				menu.gameMenu();
+				switch (turn) {
+				case 49: arrLength = 5; break;
+				case 50: arrLength = 8; break;
+				case 51: arrLength = 10; break;
+				default: break;
+				}
+				startGame();
+				console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+			}
 		}
 		else if (turn != '\n' && isStarted) keySystem(int(turn));
 	}
 }
 
-
-void Game::startGame() {
+void Game::setDefault() {
+	presentStage = 0;
+	lastStage = 0;
 	isStarted = true;
+	isPaused = false;
+	isQuit = false;
 	counterOfChoices = 0;
 	counterOfCurrentChoices = 0;
+	player = Player();
+}
+
+void Game::startGame() {
+	setDefault();
+	
 	gameField = new Cell * [arrLength + 6];
 	for (int i = 0; i < arrLength + 6; i++) {
 		gameField[i] = new Cell[arrLength + 6];
@@ -200,6 +223,8 @@ void Game::startGame() {
 	}
 	writeFieldInFields();
 
+	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+
 }
 
 void Game::movement(int key) {
@@ -229,7 +254,6 @@ void Game::movement(int key) {
 	writeFieldInFields();
 	
 	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
-
 }
 
 void Game::keySystem(int key) {
@@ -241,18 +265,14 @@ void Game::keySystem(int key) {
 		|| key == 65 || key == 97
 		|| key == 68 || key == 100) {
 		movement(key);
-
 	}
 	else {
-		if (key == 113 || key == 81) { // q | Q
 
-		}
-		else if (key == 117 || key == 85) { // u | U
+		if (key == 117 || key == 85) { // u | U
 			undo();
-			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		}
 		else if (key == 114 || key == 82) { // r | R
-
+			redo();
 		}
 		else if (key == 32) { // spacja
 			cout << "shoot\n";
@@ -264,18 +284,31 @@ void Game::keySystem(int key) {
 		else if (key == 111) { // o
 			setAtomByPlayer();
 		}
-		else if (key == 112) { // p
-
-		}
 		else if (key == 72) { // H
 			showHelp = true;
 			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
-			writeFieldInFields();
 			showHelp = false;
+			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		}
-		else if (key == 107) { // k
+		else if (key == 113 || key == 81) { // q | Q 
+			isPaused = true;
+			isQuit = true;
 			endGame();
+			menu.printMenu();
 		}
+		else if (key == 120) { // x
+			counterOfChoices = maxAtoms;
+			isRestart = true;
+			endGame();
+			startGame();
+		}
+		else if (key == 107 || key == 112) { // k || p
+			if (key == 112) isPaused = true; // p
+			endGame();
+			menu.printMenu();
+		}
+		
+
 		else if (key == 90) {}//Z
 		else {
 			cout << "Wrong symbol" << endl;
@@ -332,13 +365,21 @@ void Game::randomAtoms() {
 }
 
 void Game::endGame() {
-	if (counterOfChoices == maxAtoms) {
+	if ((counterOfChoices == maxAtoms) || isPaused) {
 		isStarted = false;
-		console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+		if(!isQuit)	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 		for (int i = 0; i < arrLength + 6; ++i) {
 			delete[] gameField[i];
 		}
 		delete[] gameField;
+
+		for (int i = 0; i < fieldsSize; i++) {
+			for (int j = 0; j < arrLength + 6; ++j) {
+				delete[] fields[i][j];
+			}
+			delete[] fields[i];
+		}
+		delete[] fields;
 	}
 	else {
 		cout << "You have " << maxAtoms - counterOfChoices << " more choice(s)\n";

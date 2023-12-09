@@ -94,9 +94,9 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 	}
 
 	if(!isGameStarted){
-		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n";
+		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n\n";
 	}
-	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
 void Console::showPlayer(int x, int y, int length) {

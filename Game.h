@@ -7,27 +7,32 @@
 class Game {
 private:
 	int counterOfCurrentChoices = 0; // ilosc poprawnie wyznaczonych atomow
-	int counterOfChoices = 0;
+	int counterOfChoices = 0; // ilosc wyznaczonych atomow
 	int maxAtoms;
 	int presentStage = 0;
 	int lastStage = 0;
 	bool isStarted = false;
 	bool showHelp = false;
+	bool isPaused = false;
+	bool isQuit = false;
+	bool isRestart = false;
 	Cell** gameField;
 	int fieldsSize;
 	Cell*** fields;
 public:
-	int arrLength = 5; // default information
+	int arrLength = 5;
 	Menu menu;
 	Player player;
 	Console console;
-
-
+	
 	void randomAtoms();
 	void movement(int);
 	void keySystem(int);
 	void shootSystem();
 	void setAtomByPlayer();
+
+	void setDefault();
+
 	void start();
 	void startGame();
 	void endGame();
