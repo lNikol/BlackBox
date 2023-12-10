@@ -58,43 +58,85 @@ void Game::shootSystem() {
 
 			while ((rx > 2 && rx < (arrLength + 3)) && (ry > 2 && ry < (arrLength + 3))) {
 				gameField[ry][rx].setIsRayHere(true);
-				//console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 				ray.setOldY(ry); ray.setOldX(rx);
-
 				gameField[ray.getOldY()][ray.getOldX()].setIsRayHere(false);
 
 				switch (ray.getDirection()) {
 				case '0': // 0 - w - w gore
 					if (gameField[ry - 1][rx].getAtomHere() || gameField[ry][rx].getAtomHere()) {
-						std::cout << "case 0" << std::endl;
 						ray.setIsHit(true);
 						ray.setY(2);
 					} break;
 				case '1': // 1 - s - w dol	
 					if (gameField[ry + 1][rx].getAtomHere() || gameField[ry][rx].getAtomHere()) {
-						std::cout << "case 1" << std::endl;
 						ray.setIsHit(true);
 						ray.setY(arrLength + 3);
 					}
 					break;
 				case '2': // 2 - a - w lewo 
 					if (gameField[ry][rx - 1].getAtomHere() || gameField[ry][rx].getAtomHere()) {
-						std::cout << "case 2" << std::endl;
 						ray.setIsHit(true);
-						ray.setY(2);
+						ray.setX(2);
 					}
 					break;
 				case '3': // 3 - d - w prawo
 					if (gameField[ry][rx + 1].getAtomHere() || gameField[ry][rx].getAtomHere()) {
-						std::cout << "case 3" << std::endl;
 						ray.setIsHit(true);
-						ray.setY(arrLength + 3);
+						ray.setX(arrLength + 3);
 					}
 					break;
 				default: break;
 				}
 
 				if (ray.getIsHit() == false) {
+					int coun = gameField[ry][rx].getCounterOfAtomsArea();
+
+					switch (ray.getStartDirection()) {
+						// 0 - w - w gore
+						// 1 - s - w dol
+						// 2 - a - w lewo 
+						// 3 - d - w prawo
+					case '0':
+						switch (coun % 4) {
+						case 0: ray.setDirection('0'); break;
+						case 1: ray.setDirection('3'); ray.increaseCounterOfRefraction(); break;
+						case 2: ray.setDirection('1'); ray.increaseCounterOfRefraction(); break;
+						case 3: ray.setDirection('2'); ray.increaseCounterOfRefraction(); break;
+						default:break;
+						};
+						break;
+					case '1':
+						switch (coun % 4) {
+						case 0: ray.setDirection('1'); break;
+						case 1: ray.setDirection('3'); ray.increaseCounterOfRefraction(); break;
+						case 2: ray.setDirection('0'); ray.increaseCounterOfRefraction(); break;
+						case 3: ray.setDirection('2'); ray.increaseCounterOfRefraction(); break;
+						default:break;
+						};
+						break;
+					case '2':
+						switch (coun % 4) {
+						case 0: ray.setDirection('2'); break;
+						case 1: ray.setDirection('0'); ray.increaseCounterOfRefraction(); break;
+						case 2: ray.setDirection('3'); ray.increaseCounterOfRefraction(); break;
+						case 3: ray.setDirection('1'); ray.increaseCounterOfRefraction(); break;
+						default:break;
+						};
+						break;
+					case '3':
+						switch (coun % 4) {
+						case 0: ray.setDirection('3'); break;
+						case 1: ray.setDirection('1'); ray.increaseCounterOfRefraction(); break;
+						case 2: ray.setDirection('2'); ray.increaseCounterOfRefraction(); break;
+						case 3: ray.setDirection('0'); ray.increaseCounterOfRefraction(); break;
+						default:break;
+						};
+						break;
+					default: break;
+					}
+					ray.setStartDirection(ray.getDirection());
+
+
 					switch (ray.getDirection()) {
 					case '0': ray.setY(ry - 1); break; // 0 - w - w gore
 					case '1': ray.setY(ry + 1); break; // 1 - s - w dol
@@ -102,37 +144,7 @@ void Game::shootSystem() {
 					case '3': ray.setX(rx + 1); break; // 3 - d - w prawo
 					default: break;
 					}
-					int coun = gameField[ry][rx].getCounterOfAtomsArea();
-					cout << "coun " << coun << endl;
-
-					int res = (coun + int(ray.getDirection())) % 4;
-					cout << "res " << res << endl;
-
-					switch (ray.getStartDirection()) {
-						case '0': ray.setDirection('0'); break;
-						case '1': ray.setDirection('1'); break;
-						case '2': res = (coun * 2 + int(ray.getDirection())) % 4;
-							switch (res) {
-							case 0:break;
-							case 1:break;
-							case 2:break;
-							case 3:break;
-							default:break;
-							}
-							ray.setDirection('2'); break;
-						case '3': ray.setDirection('3'); break;
-						default: break;
-					}
-
-
-					switch (res) {
-					case 0: ray.setDirection('0'); break;
-					case 1: ray.setDirection('1'); break;
-					case 2: ray.setDirection('2'); break;
-					case 3: ray.setDirection('3'); break;
-					default:break;
-					}
-					cout << "rD " << ray.getDirection() << endl;
+					if (ray.getCounterOfRefraction() != 0) ray.setIsRefracted(true);
 				}
 				rx = ray.getX();
 				ry = ray.getY();
@@ -185,13 +197,18 @@ void Game::shootSystem() {
 		}
 		else cout << "You can't shoot, you're not on the border\n";
 
-	}
 	writeFieldInFields();
+	}
 	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 
 }
 
 void Game::setShootingInfo(int x, int y) {
+	if (shootCounter == 99) {
+		shootCounter = 0; cout << "Counter was 99, now 0\n";
+		gameField[y][x].setNumberOfHitHere1('0');
+		gameField[y][x].setNumberOfHitHere2(' ');
+	}
 	if (shootCounter >= 10) gameField[y][x].setNumberOfHitHere2('0' + (shootCounter / 10));
 	gameField[y][x].setNumberOfHitHere1('0' + (shootCounter % 10));
 }
@@ -265,29 +282,40 @@ void Game::increaseFieldsSize() {
 }
 
 void Game::redo() {
+	cout << "pres " << presentStage << "last " << lastStage << endl;
+	if (presentStage < (lastStage + 1) || presentStage == (lastStage + 1)) {
+		cout << "Redo cannot be performed\n";
+	}
+	else {
+		cout << "pres>last+1\n";
+		lastStage++;
+		setOldField();
+	}
+}
 
+void Game::setOldField() {
+	int tempPlayerChoices = 0;
+	for (int j = 0; j < arrLength + 6; j++) {
+		for (int k = 0; k < arrLength + 6; k++) {
+			if (fields[lastStage][j][k].getIsPlayerHere()) {
+				player.setOldX(player.getX()); player.setOldY(player.getY());
+				player.setX(k); player.setY(j);
+			}
+			if (fields[lastStage][j][k].getAtomIsHereByPlayer()) {
+				tempPlayerChoices++;
+			}
+			gameField[j][k] = fields[lastStage][j][k];
+		}
+	}
+	counterOfChoices = tempPlayerChoices;
+	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
 }
 
 void Game::undo() {
+	cout << "Last " << lastStage << endl;
 	if (lastStage >= 1) {
 		lastStage--;
-		int tempPlayerChoices = 0;
-		for (int j = 0; j < arrLength + 6; j++) {
-			for (int k = 0; k < arrLength + 6; k++) {
-				if (fields[lastStage][j][k].getIsPlayerHere()) {
-					player.setOldX(player.getX()); player.setOldY(player.getY());
-					player.setX(k); player.setY(j);
-				}
-				if (fields[lastStage][j][k].getAtomIsHereByPlayer()) {
-					cout << fields[lastStage][j][k].getAtomIsHereByPlayer() << " is " << j << " " << k << endl;
-					tempPlayerChoices++;
-				}
-				gameField[j][k] = fields[lastStage][j][k];
-			}
-		}
-		counterOfChoices = tempPlayerChoices;
-		presentStage--;
-		console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
+		setOldField();
 	}
 	else cout << "Undo cannot be performed\n";
 
@@ -431,12 +459,12 @@ void Game::movement(int key) {
 	case 68:
 	case 100: if (px < arrLength + 3 && px >= 2) { player.setX(player.getX() + 1); } break; // D || d
 	}
+
 	px = player.getX();
 	py = player.getY();
 
 	gameField[player.getOldY()][player.getOldX()].setIsPlayerHere(false);
 	gameField[py][px].setIsPlayerHere(true);
-
 	writeFieldInFields();
 
 	console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);

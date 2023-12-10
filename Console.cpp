@@ -13,14 +13,14 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 	for (int i = 0; i < length + 6; i++) {
 		for (int j = 0; j < length + 6; j++) {
 			bool shown = false;
-			if (gameField[i][j].getIsHitHere()){
+			if (gameField[i][j].getIsHitHere()) {
 				if (j < length + 4) cout << ' ' << gameField[i][j].getHitHere();
 				else if (j == length + 4) cout << ' ' << gameField[i][j].getHitHere();
 				else if (j == length + 5) cout << ' ' << gameField[i][j].getHitHere();
 			}
 
 			if (gameField[i][j].getIsSpaceHere()) {
-				if (j == 1 && (i >= 1 && i <= length + 4)){
+				if (j == 1 && (i >= 1 && i <= length + 4)) {
 					if (j == 1 && i == 1) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
 					else if (j == 1 && i == length + 4) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
 					else cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1() << ' ';
@@ -41,8 +41,8 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 					if (
 						(i == 2 && (j > 2 && j < length + 3)) // gorny 
 						||
-						((i == length + 3) && (j > 2 && j < length + 3))
-						) // dolny
+						((i == length + 3) && (j > 2 && j < length + 3)) // dolny
+						)
 					{
 						cout << gameField[i][j].getBorderHere() << gameField[i][j].getBorderHere();
 					}
@@ -51,15 +51,14 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 				}
 			}
 			else if (gameField[i][j].getIsPlayerHere() && shown != true && isGameStarted) {
-				if (gameField[i][j].getAtomHere()) { // delete
-					showSymbol(length + 2, j, 'O');
-				}
-				else if (gameField[i][j].getAtomIsHereByPlayer() && showHelp == false) {
+				if (gameField[i][j].getAtomIsHereByPlayer() && showHelp == false) {
 					showSymbol(length + 2, j, 'o');
 				}
-				else {
-					showSymbol(length + 2, j, 'P');
+				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
+					showSymbol(length + 2, j, 'O');
 				}
+				else if (gameField[i][j].getIsPlayerHere()) showSymbol(length + 2, j, 'P');
+				else showSymbol(length + 2, j, 'O');
 			}
 			else if ((j >= 3 && j < length + 3) && (i >= 3 && i < (length + 3))) {
 				if (gameField[i][j].getAtomIsHereByPlayer()) {
@@ -74,17 +73,18 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 						}
 					}
 					else {
-						showSymbol(length + 2, j, 'o');
+						if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere() && showHelp == true)
+						{
+							showSymbol(length + 2, j, 'O');
+						}
+						else showSymbol(length + 2, j, 'o');
 					}
 				}
-				else if (gameField[i][j].getAtomHere() && (isGameStarted == true || showHelp == true)) {
+				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
 					showSymbol(length + 2, j, 'O');
 				}
-				else if (gameField[i][j].getIsRayHere()) {
-				}
-				else {
-					showSymbol(length + 2, j, '.');
-				}
+				
+				else showSymbol(length + 2, j, '.');
 			}
 		}
 		cout << endl;

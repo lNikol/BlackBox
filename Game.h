@@ -47,5 +47,5 @@ public:
 	void setShootingInfo(int, int);
 
 	void scanPlace(int, int);
-
+	void setOldField();
 };

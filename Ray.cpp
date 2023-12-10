@@ -1,5 +1,4 @@
 #include "Ray.h"
-#include <iostream>
 
 void Ray::setOldX(int oldXt) { oldX = oldXt; }
 int Ray::getOldX() { return oldX; }
@@ -12,8 +11,6 @@ char Ray::getDirection() { return direction; }
 
 void Ray::setStartDirection(unsigned char d) { startDirection = d; }
 char Ray::getStartDirection() { return startDirection; }
-
-
 
 void Ray::setIsHit(bool s) { isHit = s; }
 bool Ray::getIsHit() { return isHit; }
