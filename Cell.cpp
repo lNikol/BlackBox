@@ -1,20 +1,25 @@
 #include "Cell.h"
 
+void Cell::setX(int fx) { x = fx; };
+int Cell::getX() { return x; };
+
+void Cell::setY(int fy) { y = fy; };
+int Cell::getY() { return y; };
+
 void Cell::setAtomHere(bool isAtom) { isAtomHere = isAtom; }
 bool Cell::getAtomHere() { return isAtomHere; }
 
 void Cell::setAtomIsHereByPlayer(bool isAtom) { atomIsHereByPlayer = isAtom; }
 bool Cell::getAtomIsHereByPlayer() { return atomIsHereByPlayer; }
 
-
 void Cell::setIsPlayerHere(bool fisPlayerHere) { isPlayerHere = fisPlayerHere; }
 bool Cell::getIsPlayerHere() { return isPlayerHere; }
 
-void Cell::setX(int fx) { x = fx; };
-int Cell::getX() { return x; };
+void Cell::setIsBorderHere(bool border) { isBorderHere = border; }
+bool Cell::getIsBorderHere() { return isBorderHere; }
 
-void Cell::setY(int fy) { y = fy; };
-int Cell::getY() { return y; };
+void Cell::setBorderHere(unsigned char border) { borderHere = border; }
+char Cell::getBorderHere() { return borderHere; }
 
 void Cell::setNumberOfHitHere1(unsigned char ans) { numberOfHitHere1 = ans; }
 char Cell::getNumberOfHitHere1() { return numberOfHitHere1; }
@@ -28,22 +33,11 @@ char Cell::getHitHere() { return hitHere; }
 void Cell::setIsHitHere(bool isAns) { isHitHere = isAns; }
 bool Cell::getIsHitHere() { return isHitHere; }
 
-
-
-void Cell::setIsBorderHere(bool border) { isBorderHere = border; }
-bool Cell::getIsBorderHere() { return isBorderHere; }
-
-void Cell::setBorderHere(unsigned char border) { borderHere = border; }
-char Cell::getBorderHere() { return borderHere; }
-
-
 void Cell::setIsSpaceHere(bool space) { isSpaceHere = space; }
 bool Cell::getIsSpaceHere() { return isSpaceHere; }
 
-
 void Cell::setCounterOfAtomsArea(int c) { counterOfAtomsArea = c; }
 int Cell::getCounterOfAtomsArea() { return counterOfAtomsArea; }
-
 
 void Cell::setIsAtomArea(bool a) { isAtomArea = a; }
 bool Cell::getIsAtomArea() { return isAtomArea; }

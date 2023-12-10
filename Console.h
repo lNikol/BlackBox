@@ -1,5 +1,4 @@
 #pragma once
-#include "Player.h"
 #include "Cell.h"
 class Console {
 	public:

@@ -5,5 +5,4 @@ class Menu {
 		void showAuthor();
 		void printMenu();
 		void gameMenu();
-
 };

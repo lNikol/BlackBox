@@ -13,6 +13,7 @@ private:
 	bool isPlayerHere = false;
 	bool isBorderHere = false;
 	unsigned char borderHere;
+
 	bool isHitHere = false;
 	bool isNumberHere = false;
 	unsigned char hitHere = ' ';
@@ -21,26 +22,26 @@ private:
 
 	bool isSpaceHere = false;
 public:
-	void setAtomIsHereByPlayer(bool);
-	bool getAtomIsHereByPlayer();
-	
-	void setAtomHere(bool);
-	bool getAtomHere();
-
-	void setIsPlayerHere(bool);
-	bool getIsPlayerHere();
-
-	void setBorderHere(unsigned char);
-	char getBorderHere();
-
-	void setIsBorderHere(bool);
-	bool getIsBorderHere();
-
 	void setX(int);
 	int getX();
 
 	void setY(int);
 	int getY();
+	
+	void setAtomHere(bool);
+	bool getAtomHere();
+
+	void setAtomIsHereByPlayer(bool);
+	bool getAtomIsHereByPlayer();
+
+	void setIsPlayerHere(bool);
+	bool getIsPlayerHere();
+
+	void setIsBorderHere(bool);
+	bool getIsBorderHere();
+
+	void setBorderHere(unsigned char);
+	char getBorderHere();
 
 	void setNumberOfHitHere1(unsigned char);
 	char getNumberOfHitHere1();

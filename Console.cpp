@@ -97,7 +97,7 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 }
 
 void Console::showPlayer(int x, int y, int length) {
-	if ((x == 2 || x == length + 3) && (y == 2 || y == length + 3)) cout << "P"; //krawedzi
+	if ((x == 2 || x == length + 3) && (y == 2 || y == length + 3)) cout << "P"; // krawedzi
 	else if (x == 1) cout << "P ";
 	else if (x == (length + 3) && (y == 1 || y == (length + 4))) cout << "P";
 	else if ((x == 2 || x == length + 3) && (y >= 3 && y <= length + 2)) cout << "P"; // pionowe mury
