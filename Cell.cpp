@@ -1,11 +1,5 @@
 #include "Cell.h"
 
-void Cell::setX(int fx) { x = fx; };
-int Cell::getX() { return x; };
-
-void Cell::setY(int fy) { y = fy; };
-int Cell::getY() { return y; };
-
 void Cell::setAtomHere(bool isAtom) { isAtomHere = isAtom; }
 bool Cell::getAtomHere() { return isAtomHere; }
 

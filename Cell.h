@@ -1,7 +1,7 @@
 #pragma once
-class Cell {
+#include "Main.h"
+class Cell : public Main {
 private:
-	int x = 0, y = 0;
 	bool isAtomHere = false;
 	bool atomIsHereByPlayer = false;
 	char atomHereByPlayer = 'o';
@@ -22,11 +22,7 @@ private:
 
 	bool isSpaceHere = false;
 public:
-	void setX(int);
-	int getX();
-
-	void setY(int);
-	int getY();
+	Cell(int fx = 0, int fy = 0) :Main(fx, fy) {};
 	
 	void setAtomHere(bool);
 	bool getAtomHere();

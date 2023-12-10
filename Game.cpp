@@ -124,6 +124,8 @@ void Game::endGame() {
 			delete[] fields[i];
 		}
 		delete[] fields;
+
+		if (isPaused) menu.printMenu();
 	}
 	else cout << "You have " << maxAtoms - counterOfChoices << " more choice(s)\n";
 }
