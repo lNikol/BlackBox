@@ -4,9 +4,7 @@ using namespace std;
 
 void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atoms, int& currentChoices, bool showHelp) {
 	// if 5x5 -> length is 5;  i to Y; j to X
-	if (isGameStarted) {
-		cout << "\nThere are " << atoms << " atoms on the map\n";
-	}
+	if (isGameStarted) cout << "\nThere are " << atoms << " atoms on the map\n";
 
 	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
@@ -14,22 +12,16 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 		for (int j = 0; j < length + 6; j++) {
 			bool shown = false;
 			if (gameField[i][j].getIsHitHere()) {
-				if (j < length + 4) cout << ' ' << gameField[i][j].getHitHere();
-				else if (j == length + 4) cout << ' ' << gameField[i][j].getHitHere();
-				else if (j == length + 5) cout << ' ' << gameField[i][j].getHitHere();
+				if (j < (length + 4) || j == (length + 4) || j == (length + 5)) cout << ' ' << gameField[i][j].getHitHere();
 			}
 
 			if (gameField[i][j].getIsSpaceHere()) {
 				if (j == 1 && (i >= 1 && i <= length + 4)) {
-					if (j == 1 && i == 1) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
-					else if (j == 1 && i == length + 4) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+					if (j == 1 && (i == 1 || i == length + 4)) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
 					else cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1() << ' ';
 				}
-				else if (j == 2) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
-				else if (j > 2 && j < (length + 3) && (i == 1 || i == length + 4)) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
-
-				else if (j == (length + 4) && (i >= 1 && i <= (length + 4))) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
-				else if (j == (length + 3)) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+				else if (j == 2 || (j > 2 && j < (length + 3) && (i == 1 || i == length + 4))) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
+				else if (j == (length + 3) || (j == (length + 4) && (i >= 1 && i <= (length + 4)))) cout << gameField[i][j].getNumberOfHitHere2() << gameField[i][j].getNumberOfHitHere1();
 			}
 			else if (gameField[i][j].getIsBorderHere()) {
 				if (gameField[i][j].getIsPlayerHere()) {
@@ -63,36 +55,27 @@ void Console::drawMap(Cell** gameField, int length, bool isGameStarted, int atom
 			else if ((j >= 3 && j < length + 3) && (i >= 3 && i < (length + 3))) {
 				if (gameField[i][j].getAtomIsHereByPlayer()) {
 					if (isGameStarted == false) {
-						if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere() == false) {
-							showSymbol(length + 2, j, 'X');
-						}
-						else if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere())
-						{
-							currentChoices++;
-							showSymbol(length + 2, j, 'O');
+						if (gameField[i][j].getAtomIsHereByPlayer()) {
+							if (gameField[i][j].getAtomHere() == false)	showSymbol(length + 2, j, 'X');
+							else { currentChoices++; showSymbol(length + 2, j, 'O'); }
 						}
 					}
 					else {
 						if (gameField[i][j].getAtomIsHereByPlayer() && gameField[i][j].getAtomHere() && showHelp == true)
-						{
 							showSymbol(length + 2, j, 'O');
-						}
 						else showSymbol(length + 2, j, 'o');
 					}
 				}
-				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true)) {
+				else if (gameField[i][j].getAtomHere() && (isGameStarted == false || showHelp == true))
 					showSymbol(length + 2, j, 'O');
-				}
-				
+
 				else showSymbol(length + 2, j, '.');
 			}
 		}
 		cout << endl;
 	}
 
-	if (!isGameStarted) {
-		cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n\n";
-	}
+	if (!isGameStarted) cout << "\nYou have found " << currentChoices << " of " << atoms << " atoms\n\n";
 	if (showHelp) cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
@@ -107,6 +90,6 @@ void Console::showPlayer(int x, int y, int length) {
 }
 
 void Console::showSymbol(int max, int j, char s) {
-	if (j == max)  cout << " " << s << " ";
-	else  cout << " " << s;
+	if (j == max) cout << " " << s << " ";
+	else cout << " " << s;
 }

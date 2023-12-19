@@ -297,10 +297,6 @@ void Game::shootSystem() {
 
 					// odbicie atomu
 					switch (ray.getStartDirection()) {
-						// 0 - w - w gore
-						// 1 - s - w dol
-						// 2 - a - w lewo 
-						// 3 - d - w prawo
 					case '0':
 						switch (coun % 4) {
 							case 0: ray.setDirection('0'); break;
@@ -356,46 +352,42 @@ void Game::shootSystem() {
 			}
 
 			if (rx == 2) {
+				gameField[ry][0].setIsHitHere(true);
 				if (ray.getIsHit()) {
 					gameField[ry][0].setHitHere('H');
-					gameField[ry][0].setIsHitHere(true);
 				}
 				else if (ray.getIsRefracted()) {
 					gameField[ry][0].setHitHere('R');
-					gameField[ry][0].setIsHitHere(true);
 				}
 				setShootingInfo(rx - 1, ry);
 			}
 			else if (rx == arrLength + 3) {
+				gameField[ry][arrLength + 5].setIsHitHere(true);
 				if (ray.getIsHit()) {
 					gameField[ry][arrLength + 5].setHitHere('H');
-					gameField[ry][arrLength + 5].setIsHitHere(true);
 				}
 				else if (ray.getIsRefracted()) {
 					gameField[ry][arrLength + 5].setHitHere('R');
-					gameField[ry][arrLength + 5].setIsHitHere(true);
 				}
 				setShootingInfo(arrLength + 4, ry);
 			}
 			else if (ry == 2) {
+				gameField[0][rx].setIsHitHere(true);
 				if (ray.getIsHit()) {
 					gameField[0][rx].setHitHere('H');
-					gameField[0][rx].setIsHitHere(true);
 				}
 				else if (ray.getIsRefracted()) {
 					gameField[0][rx].setHitHere('R');
-					gameField[0][rx].setIsHitHere(true);
 				}
 				setShootingInfo(rx, ry - 1);
 			}
 			else if (ry == arrLength + 3) {
+				gameField[arrLength + 5][rx].setIsHitHere(true);
 				if (ray.getIsHit()) {
 					gameField[arrLength + 5][rx].setHitHere('H');
-					gameField[arrLength + 5][rx].setIsHitHere(true);
 				}
 				else if (ray.getIsRefracted()) {
 					gameField[arrLength + 5][rx].setHitHere('R');
-					gameField[arrLength + 5][rx].setIsHitHere(true);
 				}
 				setShootingInfo(rx, arrLength + 4);
 			}
@@ -449,8 +441,7 @@ void Game::keySystem(int key) {
 
 			clock_t endwait;
 			endwait = clock() + 1000;
-			while (clock() < endwait) {
-			}
+			while (clock() < endwait) {}
 			showHelp = false;
 			cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 			console.drawMap(gameField, arrLength, isStarted, maxAtoms, counterOfCurrentChoices, showHelp);
@@ -459,11 +450,9 @@ void Game::keySystem(int key) {
 			isPaused = true;
 			isQuit = true;
 			endGame();
-			menu.printMenu();
 		}
 		else if (key == 120) { // x
 			counterOfChoices = maxAtoms;
-			isRestart = true;
 			endGame();
 			startGame();
 		}

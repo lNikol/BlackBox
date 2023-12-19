@@ -19,13 +19,11 @@ private:
 	bool isStarted = false;
 	bool isPaused = false;
 	bool isQuit = false;
-	bool isRestart = false;
 	
 	Cell** gameField;
 	int fieldsSize;
 	Cell*** fields;
 public:
-	// arrLength - size of map 5x5, 7x7, 10x10
 	int arrLength = 5;
 	Menu menu;
 	Player player;
